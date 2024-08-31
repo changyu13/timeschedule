@@ -1,0 +1,12 @@
+.container {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.box {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
