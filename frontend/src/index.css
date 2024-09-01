@@ -1,8 +1,0 @@
-html {
-  background-color: #ddd;
-}
-
-body {
-  width: $mantine-breakpoint-sm;
-  margin: 0 auto;
-}

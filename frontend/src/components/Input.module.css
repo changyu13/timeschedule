@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  background-color: rgb(235 237 239);
+}
+.basket {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0.5rem 0.5rem 0 0.5rem;
+}
+
+.userInput {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  margin: 0.5rem;
+}
+
+.credits {
+  width: 10em;
+}
