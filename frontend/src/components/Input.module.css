@@ -10,6 +10,11 @@
   margin: 0.5rem 0.5rem 0 0.5rem;
 }
 
+.entityBasket {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 .userInput {
   display: flex;
   flex-direction: column;
@@ -20,4 +25,13 @@
 
 .credits {
   width: 10em;
+}
+
+.entity {
+  border: 0.1rem solid black;
+  background-color: #ddd;
+  margin: 0.1rem;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  display: flex;
 }

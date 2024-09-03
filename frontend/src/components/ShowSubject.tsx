@@ -6,6 +6,7 @@ interface Props {
   professor: string | undefined;
   credit: number | undefined;
   onClickRequired: (subNo: string) => void;
+  onClickElective: (subNo: string) => void;
 }
 const ShowSubject: React.FC<Props> = ({
   subNo,
@@ -13,6 +14,7 @@ const ShowSubject: React.FC<Props> = ({
   professor,
   credit,
   onClickRequired,
+  onClickElective,
 }) => {
   return (
     <div>
@@ -27,7 +29,11 @@ const ShowSubject: React.FC<Props> = ({
       >
         필수
       </Button>
-      <Button variant="filled" color="gray">
+      <Button
+        variant="filled"
+        color="gray"
+        onClick={() => onClickElective(subNo)}
+      >
         선택
       </Button>
     </div>
