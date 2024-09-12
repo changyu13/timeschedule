@@ -1,7 +1,15 @@
-import { Button, Modal, Paper, Select, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Modal,
+  Paper,
+  Select,
+  TextInput,
+  UnstyledButton,
+} from "@mantine/core";
 import styles from "./Input.module.css";
 import { useDisclosure } from "@mantine/hooks";
-import { ReactNode, useState } from "react";
+import { Component, useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
 
@@ -18,6 +26,7 @@ function Input() {
 
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
+
   const subject = new Map([
     [
       "1111",
@@ -59,18 +68,28 @@ function Input() {
   const onClickRequired = (subNo: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
     const test = subject.get(subNo);
-    if (test !== undefined) {
-      //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
-      setRequiredSubject((prev) => [...prev, test]);
+    if (test === undefined) {
+      return;
     }
+    if (requiredSubject.some((x) => x.subNo === test.subNo)) {
+      alert("이미 해당 과목을 추가하셨습니다.");
+      return;
+    }
+    //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
+    setRequiredSubject((prev) => [...prev, test]);
   };
   const onClickElective = (subNo: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
     const test = subject.get(subNo);
-    if (test !== undefined) {
-      //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
-      setElectiveSubject((prev) => [...prev, test]);
+    if (test === undefined) {
+      return;
     }
+    if (electiveSubject.some((x) => x.subNo === test.subNo)) {
+      alert("이미 해당 과목을 추가하셨습니다.");
+      return;
+    }
+    //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
+    setElectiveSubject((prev) => [...prev, test]);
   };
 
   const requiredSubjectNodes = requiredSubject.map((x) => (
@@ -80,7 +99,15 @@ function Input() {
         <div>교수 : {x.professor}</div>
         <div>학점 : {x.credit}</div>
       </div>
-      <FaWindowClose />
+      <UnstyledButton
+        onClick={() => {
+          setRequiredSubject((prev) =>
+            prev.filter((now) => x.subNo !== now.subNo)
+          );
+        }}
+      >
+        <FaWindowClose />
+      </UnstyledButton>
     </div>
   ));
   const electiveSubjectNodes = electiveSubject.map((x) => (
@@ -90,7 +117,15 @@ function Input() {
         <div>교수 : {x.professor}</div>
         <div>학점 : {x.credit}</div>
       </div>
-      <FaWindowClose />
+      <UnstyledButton
+        onClick={() => {
+          setElectiveSubject((prev) =>
+            prev.filter((now) => x.subNo !== now.subNo)
+          );
+        }}
+      >
+        <FaWindowClose />
+      </UnstyledButton>
     </div>
   ));
   return (
