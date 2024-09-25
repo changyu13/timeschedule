@@ -1,7 +1,25 @@
 package com.example.schedule.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Schedule {
-    private String subjectPk;
-    private Integer start;
-    private Integer end;
+    @Id
+    private Integer subjectNo;
+    @Id
+    private Integer dow;
+    @Column
+    private Integer startTime;
+    @Column
+    private Integer endTime;
 }

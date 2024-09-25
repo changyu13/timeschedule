@@ -8,7 +8,9 @@ import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,38 +26,13 @@ import java.util.function.Function;
 @SpringBootApplication
 public class BackendApplication {
 	public static void main(String[] args) throws CsvValidationException,IOException {
-		SpringApplication.run(BackendApplication.class, args);
-		CSVReader csvReader = new CSVReader(new FileReader("D:\\study\\timeschedule\\backend\\schedule.csv"));
-		String[] line;
-		String[] time;
-		int noIdx=6;
-		int nameIdx=7;
-		int timeIdx=16;
-		int professorIdx=17;
-		int idx;
-		int count=0;
-		csvReader.readNext();
-		while((line=csvReader.readNext())!=null){
-
-			/*
-			time = line[timeIdx].split(",");
-			for(int i=0;i<time.length;i++){
-				time[i]= time[i].trim();
-				idx=time[i].indexOf("-");
-				System.out.println(line[noIdx]+"+"+time[i].charAt(0));
-				System.out.println(time[i].substring(idx-2,idx));
-				System.out.println(time[i].substring(idx+1,idx+3));
-			}*/
-
-			//과목 넣기
-			SubjectDto dto = new SubjectDto(line[noIdx],line[nameIdx],line[professorIdx]);
-			Subject subject = dto.toEntity();
-			System.out.println(subject.getSubjectNo()+"/"+subject.getSubjectName()+"/"+subject.getProfessor());
-
-			count++;
-			if(count==5){
-				break;
-			}
+		SpringApplicationBuilder app = new SpringApplicationBuilder(BackendApplication.class);
+		if(args.length==0){
+			app.web(WebApplicationType.SERVLET);
 		}
+		else{
+			app.web(WebApplicationType.NONE);
+		}
+		app.run(args);
 	}
 }
