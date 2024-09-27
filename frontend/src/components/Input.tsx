@@ -38,7 +38,6 @@ function Input() {
   for (let i = 0; i < sub.data.length; i++) {
     subjectNumbers.push(sub.data[i].subjectNo);
   }
-  console.log(subjectNumbers);
   const subject = new Map([
     [
       "0001",
