@@ -1,6 +1,8 @@
 package com.example.schedule.entity;
 
+import com.example.schedule.embeddedId.ScheduleId;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -14,10 +16,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Schedule {
-    @Id
-    private Integer subjectNo;
-    @Id
-    private Integer dow;
+    @EmbeddedId
+    private ScheduleId id;
     @Column
     private Integer startTime;
     @Column

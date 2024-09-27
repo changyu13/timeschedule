@@ -6,10 +6,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SubjectDto {
     private String subjectNo;
+    private String courseNo;
     private String subjectName;
     private String professor;
-
+    private Integer credit;
     public Subject toEntity(){
-        return new Subject(subjectNo,subjectName,professor);
+        return new Subject(subjectNo,courseNo,subjectName,professor,credit);
     }
 }

@@ -12,6 +12,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Component, useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
+import { useQuerySubject } from "../queries/subject";
 
 interface Sub {
   subNo: string;
@@ -27,38 +28,49 @@ function Input() {
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
 
+  const sub = useQuerySubject();
+  if (sub.isPending) {
+    return <div>로딩중...</div>;
+  } else if (sub.isError) {
+    return <div>오류발생!</div>;
+  }
+  const subjectNumbers: string[] = [];
+  for (let i = 0; i < sub.data.length; i++) {
+    subjectNumbers.push(sub.data[i].subjectNo);
+  }
+  console.log(subjectNumbers);
   const subject = new Map([
     [
-      "1111",
+      "0001",
       {
-        subNo: "1111",
+        subNo: "0001",
         subName: "알고리즘",
         professor: "조현득",
         credit: 3,
       },
     ],
     [
-      "2222",
+      "0002",
       {
-        subNo: "2222",
+        subNo: "0002",
         subName: "화학",
         professor: "이정현",
         credit: 2,
       },
     ],
     [
-      "3333",
+      "0003",
       {
-        subNo: "3333",
+        subNo: "0003",
         subName: "생명",
         professor: "김승오",
         credit: 2,
       },
     ],
     [
-      "4444",
+      "0004",
       {
-        subNo: "4444",
+        subNo: "0004",
         subName: "경제",
         professor: "김준재",
         credit: 3,
@@ -150,7 +162,7 @@ function Input() {
           searchable
           label="과목번호를 입력하세요"
           placeholder="숫자만 입력"
-          data={["1111", "2222", "3333", "4444"]}
+          data={subjectNumbers}
           searchValue={searchValue}
           onSearchChange={setSearchValue}
         />

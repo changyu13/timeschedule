@@ -17,7 +17,11 @@ public class Subject {
     @Id
     private String subjectNo;
     @Column
+    private String courseNo;
+    @Column
     private String subjectName;
     @Column
     private String professor;
+    @Column
+    private Integer credit;
 }
