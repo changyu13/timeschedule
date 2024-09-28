@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Button,
   Modal,
   Paper,
@@ -9,13 +8,14 @@ import {
 } from "@mantine/core";
 import styles from "./Input.module.css";
 import { useDisclosure } from "@mantine/hooks";
-import { Component, useState } from "react";
+import { useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
 import { useQuerySubject } from "../queries/subject";
 
 interface Sub {
   subNo: string;
+  courseNo: string;
   subName: string;
   professor: string;
   credit: number;
@@ -24,83 +24,93 @@ interface Sub {
 function Input() {
   const [opened, { open, close }] = useDisclosure(false);
   const [searchValue, setSearchValue] = useState("");
-
+  const [maxCredit, setMaxCredit] = useState<number>(0);
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
-
   const sub = useQuerySubject();
+
   if (sub.isPending) {
     return <div>로딩중...</div>;
   } else if (sub.isError) {
     return <div>오류발생!</div>;
   }
   const subjectNumbers: string[] = [];
+  const subject: Sub[] = [];
+
+  const alreadyCal: Set<string> = new Set();
+  let creditSum = 0;
+  for (const x of requiredSubject) {
+    if (alreadyCal.has(x.courseNo)) {
+      continue;
+    }
+    alreadyCal.add(x.courseNo);
+    creditSum += x.credit;
+  }
+  for (const x of electiveSubject) {
+    if (alreadyCal.has(x.courseNo)) {
+      continue;
+    }
+    alreadyCal.add(x.courseNo);
+    creditSum += x.credit;
+  }
   for (let i = 0; i < sub.data.length; i++) {
     subjectNumbers.push(sub.data[i].subjectNo);
+    const cmp: Sub = {
+      subNo: sub.data[i].subjectNo,
+      courseNo: sub.data[i].courseNo,
+      subName: sub.data[i].subjectName,
+      professor: sub.data[i].professor,
+      credit: sub.data[i].credit,
+    };
+    subject.push(cmp);
   }
-  const subject = new Map([
-    [
-      "0001",
-      {
-        subNo: "0001",
-        subName: "알고리즘",
-        professor: "조현득",
-        credit: 3,
-      },
-    ],
-    [
-      "0002",
-      {
-        subNo: "0002",
-        subName: "화학",
-        professor: "이정현",
-        credit: 2,
-      },
-    ],
-    [
-      "0003",
-      {
-        subNo: "0003",
-        subName: "생명",
-        professor: "김승오",
-        credit: 2,
-      },
-    ],
-    [
-      "0004",
-      {
-        subNo: "0004",
-        subName: "경제",
-        professor: "김준재",
-        credit: 3,
-      },
-    ],
-  ]);
-  const onClickRequired = (subNo: string) => {
+  const onClickRequired = (subNumber: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
-    const test = subject.get(subNo);
+    const test = subject.find((s) => s.subNo === subNumber);
     if (test === undefined) {
       return;
     }
-    if (requiredSubject.some((x) => x.subNo === test.subNo)) {
+    if (
+      requiredSubject.some((x) => x.subNo === test.subNo) ||
+      electiveSubject.some((x) => x.subNo === test.subNo)
+    ) {
       alert("이미 해당 과목을 추가하셨습니다.");
       return;
     }
     //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
+    if (creditSum + test.credit > maxCredit) {
+      alert("최대학점을 초과했습니다.");
+      return;
+    }
     setRequiredSubject((prev) => [...prev, test]);
   };
-  const onClickElective = (subNo: string) => {
+  const onClickElective = (subNumber: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
-    const test = subject.get(subNo);
+    const test = subject.find((s) => s.subNo === subNumber);
     if (test === undefined) {
       return;
     }
-    if (electiveSubject.some((x) => x.subNo === test.subNo)) {
+    if (
+      requiredSubject.some((x) => x.subNo === test.subNo) ||
+      electiveSubject.some((x) => x.subNo === test.subNo)
+    ) {
       alert("이미 해당 과목을 추가하셨습니다.");
       return;
     }
     //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
+    if (creditSum + test.credit > maxCredit) {
+      alert("최대학점을 초과했습니다.");
+      return;
+    }
     setElectiveSubject((prev) => [...prev, test]);
+  };
+  //에러처리를 위해 임시 사용
+  const isExist = (list: Sub[], subNumber: string) => {
+    const test = list.find((x: Sub) => x.subNo === subNumber);
+    if (test === undefined) {
+      return list[0];
+    }
+    return test;
   };
 
   const requiredSubjectNodes = requiredSubject.map((x) => (
@@ -115,6 +125,7 @@ function Input() {
           setRequiredSubject((prev) =>
             prev.filter((now) => x.subNo !== now.subNo)
           );
+          console.log(requiredSubject);
         }}
       >
         <FaWindowClose />
@@ -141,6 +152,7 @@ function Input() {
   ));
   return (
     <div className={styles.container}>
+      <div className={styles.showCredit}> 현재 학점 : {creditSum}</div>
       <Paper shadow="xs" radius="xs" p="xs" className={styles.basket}>
         <div>필수 과목</div>
         <div className={styles.entityBasket}>{requiredSubjectNodes}</div>
@@ -151,9 +163,21 @@ function Input() {
       </Paper>
       <Paper shadow="xs" radius="xs" p="xs" className={styles.userInput}>
         <div>학점을 입력하세요 (최대 21점)</div>
-        <div>
-          <TextInput className={styles.credits} placeholder="숫자만 입력" />
-          <Button onClick={open}>Open modal</Button>
+        <div className={styles.userContainer}>
+          <TextInput
+            className={styles.credits}
+            placeholder="숫자만 입력"
+            value={maxCredit}
+            onChange={(event) =>
+              setMaxCredit(Number(event.currentTarget.value))
+            }
+          />
+          <div>
+            <Button className={styles.btn} onClick={open}>
+              Open modal
+            </Button>
+            <Button className={styles.btn}>시간표 생성</Button>
+          </div>
         </div>
       </Paper>
       <Modal opened={opened} onClose={close} title="강의 추가" centered>
@@ -167,9 +191,9 @@ function Input() {
         />
         <ShowSubject
           subNo={searchValue}
-          subName={subject.get(searchValue)?.subName}
-          professor={subject.get(searchValue)?.professor}
-          credit={subject.get(searchValue)?.credit}
+          subName={isExist(subject, searchValue).subName}
+          professor={isExist(subject, searchValue).professor}
+          credit={isExist(subject, searchValue).credit}
           onClickRequired={onClickRequired}
           onClickElective={onClickElective}
         />
