@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Input from "./components/Input";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./globals";
+import TimeSchedule from "./components/TimeSchedule";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}></Route>
               <Route path="/input" element={<Input />}></Route>
+              <Route path="/schedule" element={<TimeSchedule />}></Route>
             </Routes>
           </BrowserRouter>
         </MantineProvider>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface Subject {
+export interface Subject {
   subjectNo: string;
   courseNo: string;
   subjectName: string;

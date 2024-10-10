@@ -2,7 +2,6 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  background-color: rgb(235 237 239);
 }
 .basket {
   flex-grow: 1;
@@ -17,6 +16,8 @@
 }
 .userContainer {
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .userInput {
   display: flex;
@@ -27,11 +28,12 @@
 }
 
 .credits {
-  width: 10em;
+  margin: 0;
 }
 
 .btn {
-  width: 4em;
+  flex-grow: 1;
+  margin: 0 0.2rem;
 }
 .entity {
   border: 0.1rem solid black;

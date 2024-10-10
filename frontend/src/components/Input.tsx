@@ -174,9 +174,11 @@ function Input() {
           />
           <div>
             <Button className={styles.btn} onClick={open}>
-              Open modal
+              과목 추가
             </Button>
-            <Button className={styles.btn}>시간표 생성</Button>
+            <a href="/schedule">
+              <Button className={styles.btn}>시간표 생성</Button>
+            </a>
           </div>
         </div>
       </Paper>

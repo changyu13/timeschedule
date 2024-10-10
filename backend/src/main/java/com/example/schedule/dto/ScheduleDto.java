@@ -6,11 +6,11 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class ScheduleDto {
-    private ScheduleId id;
+    private ScheduleId scheduleId;
     private Integer startTime;
     private Integer endTime;
 
     public Schedule toEntity(){
-        return new Schedule(id,startTime,endTime);
+        return new Schedule(scheduleId,startTime,endTime);
     }
 }
