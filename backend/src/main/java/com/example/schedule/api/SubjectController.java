@@ -9,6 +9,8 @@ import com.example.schedule.repository.SubjectRepository;
 import com.example.schedule.schedule.Group;
 import com.example.schedule.schedule.MakeSchedule;
 import com.example.schedule.service.ScheduleMakeService;
+import com.example.schedule.service.SessionService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
@@ -30,17 +32,20 @@ public class SubjectController {
     ScheduleRepository scheduleRepository;
     @Autowired
     ScheduleMakeService scheduleMakeService;
+    @Autowired
+    SessionService sessionService;
 
     @GetMapping("/api/subject")
-    public ResponseEntity<List<Subject>> getSubject(){
+    public ResponseEntity<List<Subject>> getSubject() {
         List<Subject> subjectList = subjectRepository.findAll();
 
-        if(subjectList.size()==0){
+        if (subjectList.size() == 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body(subjectList);
         }
     }
+
     /*@GetMapping("/api/schedule")
     public ResponseEntity<List<Schedule>> getSchedule(){
         List<Schedule> scheduleList = scheduleRepository.findAll();
@@ -53,13 +58,22 @@ public class SubjectController {
         }
     }*/
     @PostMapping("/api/courses/add")
-    public ResponseEntity<List<Schedule>> addCourse(@RequestBody SubjectNoListDto dto){
+    public void addCourse(@RequestBody SubjectNoListDto dto) {
         System.out.println(dto);
 
-        List<Group> groups = scheduleMakeService.f(dto.getRequiredSubjects(),dto.getElectiveSubjects());
+        List<Group> groups = scheduleMakeService.f(dto.getRequiredSubjects(), dto.getElectiveSubjects());
 
         MakeSchedule mySchdule = new MakeSchedule(groups);
+        sessionService.setMakeSchedule(mySchdule);
         //visual studio에서 requiredList, electiveList dto 보내기
-        return ResponseEntity.status(HttpStatus.OK).body(mySchdule.getFinishedSchedules().get(0));
+    }
+
+    @GetMapping("/api/schedule")
+    public ResponseEntity<List<Schedule>> getSchedule() {
+        MakeSchedule schedule = sessionService.getMakeSchedule();
+        if (schedule == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(schedule.getFinishedSchedules().get(0));
     }
 }
