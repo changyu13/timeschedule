@@ -12,8 +12,10 @@ import { useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
 import { useQuerySubject } from "../queries/subject";
+import { useMutateSchedule } from "../queries/schedule";
+import { Link, useNavigate } from "react-router-dom";
 
-interface Sub {
+export interface Sub {
   subNo: string;
   courseNo: string;
   subName: string;
@@ -27,13 +29,17 @@ function Input() {
   const [maxCredit, setMaxCredit] = useState<number>(0);
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
+
   const sub = useQuerySubject();
+  const { mutateAsync: sendSubject } = useMutateSchedule();
+  const navigate = useNavigate();
 
   if (sub.isPending) {
     return <div>로딩중...</div>;
   } else if (sub.isError) {
     return <div>오류발생!</div>;
   }
+
   const subjectNumbers: string[] = [];
   const subject: Sub[] = [];
 
@@ -176,9 +182,24 @@ function Input() {
             <Button className={styles.btn} onClick={open}>
               과목 추가
             </Button>
-            <a href="/schedule">
-              <Button className={styles.btn}>시간표 생성</Button>
-            </a>
+            <Button
+              className={styles.btn}
+              onClick={() => {
+                const requiredSubjectString = requiredSubject.map(
+                  (x) => x.subNo
+                );
+                const electiveSubjectString = electiveSubject.map(
+                  (x) => x.subNo
+                );
+                sendSubject({
+                  requiredList: requiredSubjectString,
+                  electiveList: electiveSubjectString,
+                });
+                navigate("/schedule");
+              }}
+            >
+              시간표 생성
+            </Button>
           </div>
         </div>
       </Paper>

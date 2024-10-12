@@ -57,7 +57,7 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.OK).body(scheduleList);
         }
     }*/
-    @PostMapping("/api/courses/add")
+    @PostMapping("/api/schedule/create")
     public void addCourse(@RequestBody SubjectNoListDto dto) {
         System.out.println(dto);
 
@@ -65,10 +65,11 @@ public class SubjectController {
 
         MakeSchedule mySchdule = new MakeSchedule(groups);
         sessionService.setMakeSchedule(mySchdule);
-        //visual studio에서 requiredList, electiveList dto 보내기
+        System.out.println(mySchdule);
     }
 
-    @GetMapping("/api/schedule")
+    //각 종목을 담고있는 리스트 3개가 들어간 dto 만들고 반환해주기
+    @GetMapping("/api/schedule/get")
     public ResponseEntity<List<Schedule>> getSchedule() {
         MakeSchedule schedule = sessionService.getMakeSchedule();
         if (schedule == null) {

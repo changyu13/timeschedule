@@ -2,6 +2,7 @@ import styles from "./TimeSchedule.module.css";
 import { useQuerySchedule } from "../queries/schedule";
 import { Schedule } from "../api/schedule";
 import { periodToTime } from "../util/periodToTime";
+
 function TimeSchedule() {
   const courseList: Schedule[] = [];
   const courseListNodes: JSX.Element[] = [];
@@ -12,10 +13,9 @@ function TimeSchedule() {
   } else if (timeData.isError) {
     return <div>오류발생!</div>;
   }
-  for (let i = 0; i <= timeData.data.length; i++) {
+  for (let i = 0; i < timeData.data.length; i++) {
     courseList.push(timeData.data[i]);
   }
-  console.log(courseList);
   for (let period = 0; period <= 23; period++) {
     const dowList = [];
     for (let j = 1; j <= 6; j++) {
@@ -64,6 +64,11 @@ function TimeSchedule() {
   }
   return (
     <div className={styles.container}>
+      <div className={styles.btnContainer}>
+        <button>최대 공강</button>
+        <button>짧은 수업 텀</button>
+        <button>잠꾸러기</button>
+      </div>
       <table className={styles.board}>
         <tr>
           <td></td>

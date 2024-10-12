@@ -2,6 +2,13 @@
   margin: 0.5rem;
   background-color: white;
 }
+.btnContainer {
+  display: flex;
+}
+button {
+  flex-grow: 1;
+  background-color: white;
+}
 .board {
   width: 100%;
   height: 70dvh;

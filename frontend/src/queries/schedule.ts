@@ -1,9 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchSchedule } from "../api/schedule";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getSchedule, postSchedule } from "../api/schedule";
+
+interface Params {
+  requiredList: string[];
+  electiveList: string[];
+}
+
+export const useMutateSchedule = () => {
+  return useMutation({
+    mutationFn: (params: Params) =>
+      postSchedule(params.requiredList, params.electiveList),
+  });
+};
 
 export const useQuerySchedule = () => {
   return useQuery({
-    queryKey: ["schedule"],
-    queryFn: fetchSchedule,
+    queryKey: ["schdule"],
+    queryFn: getSchedule,
   });
 };
