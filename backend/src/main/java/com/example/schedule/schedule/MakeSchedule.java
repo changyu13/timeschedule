@@ -5,34 +5,34 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
 public class MakeSchedule {
-    private int targetCredit;
+    private int userCredit;
     private List<Group> groups;
     private ArrayList<ArrayList<Schedule>> finishedSchedules;
 
-    public MakeSchedule(List<Group> groups) {
-        this.targetCredit = 9;
+    private int maxEmpty= 0;
+    private int maxEmptyIdx= -1;
+    public MakeSchedule(List<Group> groups, int userCredit) {
+        this.userCredit = userCredit;
         this.groups = groups;
         this.finishedSchedules = new ArrayList<>();
 
         ArrayList<ArrayList<Schedule>> timeSchedule = new ArrayList<>();
-        for (int i = 0; i <= 7; i++)
+        for (int i = 0; i <= 6; i++)
             timeSchedule.add(new ArrayList<>());
 
         scheduleCheck(timeSchedule, 0, 0);
     }
 
     private void scheduleCheck(ArrayList<ArrayList<Schedule>> timeSchedule, int depth, int sum) {
-        if (sum > targetCredit) {
+        if (sum > userCredit) {
             return;
         } else if (depth >= groups.size()) {
-            if (sum == targetCredit) {
+            if (sum == userCredit) {
                 ArrayList<Schedule> courses = new ArrayList<>();
                 for (List<Schedule> schedules : timeSchedule) {
                     for (Schedule schedule : schedules) {
@@ -40,6 +40,16 @@ public class MakeSchedule {
                     }
                 }
                 finishedSchedules.add(courses);
+                int score =0;
+                for(int i=1; i<timeSchedule.size();i++){
+                    if(timeSchedule.get(i).isEmpty()){
+                        score++;
+                    }
+                }
+                if(score>maxEmpty){
+                    maxEmpty = score;
+                    maxEmptyIdx = finishedSchedules.size()-1;
+                }
             }
             return;
         }
@@ -49,22 +59,36 @@ public class MakeSchedule {
         if (!groups.get(depth).isRequired()) {
             scheduleCheck(timeSchedule, depth + 1, sum);
         }
-
         for (int i = 0; i < subjectInGroup.size(); i++) {
             GroupMember subjectToAdd = subjectInGroup.get(i);
-            Schedule scheduleToAdd = subjectToAdd.getSchedules().get(0);
-            int dow = scheduleToAdd.getScheduleId().getDow();
-            ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
-
+            List<Schedule> scheduleToAdd = subjectToAdd.getSchedules();
             boolean hasConflict = false;
-            for (int j = 0; j < todayTimeSchedule.size() && !hasConflict; j++) {
-                hasConflict = scheduleToAdd.doesConflict(todayTimeSchedule.get(j));
-            }
+            for(int j=0; j< scheduleToAdd.size();j++)
+            {
+                int dow = scheduleToAdd.get(j).getScheduleId().getDow();
+                ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
+                for (int k = 0; k < todayTimeSchedule.size() && !hasConflict; k++) {
+                    hasConflict = scheduleToAdd.get(j).doesConflict(todayTimeSchedule.get(k));
+                }
 
+                if (hasConflict) {
+                    break;
+                }
+            }
             if (!hasConflict) {
-                todayTimeSchedule.add(scheduleToAdd);
+                for(int j=0; j< scheduleToAdd.size();j++)
+                {
+                    int dow = scheduleToAdd.get(j).getScheduleId().getDow();
+                    ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
+                    todayTimeSchedule.add(scheduleToAdd.get(j));
+                }
                 scheduleCheck(timeSchedule, depth + 1, sum + subjectToAdd.getCredit());
-                todayTimeSchedule.remove(todayTimeSchedule.size() - 1);
+                for(int j=0; j< scheduleToAdd.size();j++)
+                {
+                    int dow = scheduleToAdd.get(j).getScheduleId().getDow();
+                    ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
+                    todayTimeSchedule.remove(todayTimeSchedule.size() - 1);
+                }
             }
         }
     }

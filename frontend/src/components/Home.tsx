@@ -13,22 +13,23 @@ function Home() {
 
   return (
     <div className={styles.container}>
-      <div>당신의 전공을 선택하세요!</div>
-      <Select
-        className={styles.box}
-        placeholder="Pick value"
-        data={[
-          "컴퓨터공학부",
-          "전기전자공학부",
-          "의생명공학과",
-          "화장품공학과",
-        ]}
-        value={value}
-        onChange={setValue}
-      />
-      <Button variant="filled" onClick={showPage}>
-        입력
-      </Button>
+      <div className={styles.margin}></div>
+      <div className={styles.user}>
+        <div>당신의 전공을 선택하세요!</div>
+        <Select
+          className={styles.box}
+          placeholder="Pick value"
+          data={[
+            "컴퓨터공학부",
+            "전기전자공학부",
+            "의생명공학과",
+            "화장품공학과",
+          ]}
+          value={value}
+          onChange={setValue}
+        />
+        <Button onClick={showPage}>입력</Button>
+      </div>
     </div>
   );
 }

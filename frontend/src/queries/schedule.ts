@@ -4,12 +4,13 @@ import { getSchedule, postSchedule } from "../api/schedule";
 interface Params {
   requiredList: string[];
   electiveList: string[];
+  userCredit: number;
 }
 
 export const useMutateSchedule = () => {
   return useMutation({
     mutationFn: (params: Params) =>
-      postSchedule(params.requiredList, params.electiveList),
+      postSchedule(params.requiredList, params.electiveList, params.userCredit),
   });
 };
 

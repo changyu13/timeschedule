@@ -9,5 +9,6 @@ import java.util.ArrayList;
 public class SubjectNoListDto {
     private ArrayList<String> requiredSubjects;
     private ArrayList<String> electiveSubjects;
+    int userCredit;
 
 }
