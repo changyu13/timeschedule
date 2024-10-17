@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.example.schedule.schedule.ScoreCalc.laziestSchedule;
-
 @RestController
 public class SubjectController {
     @Autowired
@@ -63,11 +61,7 @@ public class SubjectController {
         if (schedule == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        if(schedule.getMaxEmptyIdx()==-1){
-            RecommendedScheduleDto recommendedSchedule = new RecommendedScheduleDto(null,schedule.getFinishedSchedules().get(1),schedule.getFinishedSchedules().get(2));
-            return ResponseEntity.status(HttpStatus.OK).body(recommendedSchedule);
-        }
-        RecommendedScheduleDto recommendedSchedule = new RecommendedScheduleDto(schedule.getFinishedSchedules().get(schedule.getMaxEmptyIdx()),schedule.getFinishedSchedules().get(1),laziestSchedule(schedule.getFinishedSchedules()));
+        RecommendedScheduleDto recommendedSchedule = schedule.recommendSchedule();
         return ResponseEntity.status(HttpStatus.OK).body(recommendedSchedule);
     }
 }

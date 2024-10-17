@@ -1,21 +1,23 @@
 package com.example.schedule.schedule;
 
+import com.example.schedule.dto.RecommendedScheduleDto;
 import com.example.schedule.entity.Schedule;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 public class MakeSchedule {
     private int userCredit;
     private List<Group> groups;
     private ArrayList<ArrayList<Schedule>> finishedSchedules;
 
-    private int maxEmpty= 0;
-    private int maxEmptyIdx= -1;
+    private int maxEmpty = 0;
+    private int maxEmptyIdx = -1;
+    private int laziestScoreBest = 0;
+    private int laziestScoreIdx = -1;
+
     public MakeSchedule(List<Group> groups, int userCredit) {
         this.userCredit = userCredit;
         this.groups = groups;
@@ -28,6 +30,14 @@ public class MakeSchedule {
         scheduleCheck(timeSchedule, 0, 0);
     }
 
+    public RecommendedScheduleDto recommendSchedule() {
+        return new RecommendedScheduleDto(
+                maxEmptyIdx >= 0 ? finishedSchedules.get(maxEmptyIdx) : null,
+                null,
+                finishedSchedules.get(laziestScoreIdx));
+
+    }
+
     private void scheduleCheck(ArrayList<ArrayList<Schedule>> timeSchedule, int depth, int sum) {
         if (sum > userCredit) {
             return;
@@ -35,21 +45,19 @@ public class MakeSchedule {
             if (sum == userCredit) {
                 ArrayList<Schedule> courses = new ArrayList<>();
                 for (List<Schedule> schedules : timeSchedule) {
-                    for (Schedule schedule : schedules) {
-                        courses.add(schedule);
-                    }
+                    courses.addAll(schedules);
                 }
                 finishedSchedules.add(courses);
                 // manyEmpty 저장하는 코드
-                int score =0;
-                for(int i=1; i<timeSchedule.size();i++){
-                    if(timeSchedule.get(i).isEmpty()){
-                        score++;
-                    }
-                }
-                if(score>maxEmpty) {
-                    maxEmpty = score;
+                int emptyScore = ScoreCalc.emptyScore(timeSchedule);
+                if (maxEmpty < emptyScore) {
+                    maxEmpty = emptyScore;
                     maxEmptyIdx = finishedSchedules.size() - 1;
+                }
+                int laziestScore = ScoreCalc.laziestScore(courses);
+                if(laziestScoreBest < laziestScore){
+                    laziestScoreBest = laziestScore;
+                    laziestScoreIdx = finishedSchedules.size()-1;
                 }
                 ////////
             }
@@ -65,8 +73,7 @@ public class MakeSchedule {
             GroupMember subjectToAdd = subjectInGroup.get(i);
             List<Schedule> scheduleToAdd = subjectToAdd.getSchedules();
             boolean hasConflict = false;
-            for(int j=0; j< scheduleToAdd.size();j++)
-            {
+            for (int j = 0; j < scheduleToAdd.size(); j++) {
                 int dow = scheduleToAdd.get(j).getScheduleId().getDow();
                 ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
                 for (int k = 0; k < todayTimeSchedule.size() && !hasConflict; k++) {
@@ -78,15 +85,13 @@ public class MakeSchedule {
                 }
             }
             if (!hasConflict) {
-                for(int j=0; j< scheduleToAdd.size();j++)
-                {
+                for (int j = 0; j < scheduleToAdd.size(); j++) {
                     int dow = scheduleToAdd.get(j).getScheduleId().getDow();
                     ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
                     todayTimeSchedule.add(scheduleToAdd.get(j));
                 }
                 scheduleCheck(timeSchedule, depth + 1, sum + subjectToAdd.getCredit());
-                for(int j=0; j< scheduleToAdd.size();j++)
-                {
+                for (int j = 0; j < scheduleToAdd.size(); j++) {
                     int dow = scheduleToAdd.get(j).getScheduleId().getDow();
                     ArrayList<Schedule> todayTimeSchedule = timeSchedule.get(dow);
                     todayTimeSchedule.remove(todayTimeSchedule.size() - 1);
@@ -94,4 +99,5 @@ public class MakeSchedule {
             }
         }
     }
+
 }
