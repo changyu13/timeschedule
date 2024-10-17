@@ -53,7 +53,7 @@ public class Update implements CommandLineRunner {
         int courseIdx = 4;
         int noIdx = 6;
         int nameIdx = 7;
-        int creditIdx = 12;
+        int creditIdx = 11;
         int timeIdx = 16;
         int professorIdx = 17;
         int idx;

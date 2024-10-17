@@ -9,15 +9,19 @@ import com.example.schedule.schedule.Group;
 import com.example.schedule.schedule.MakeSchedule;
 import com.example.schedule.service.ScheduleMakeService;
 import com.example.schedule.service.SessionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.example.schedule.schedule.ScoreCalc.laziestSchedule;
 
 @RestController
 public class SubjectController {
@@ -41,17 +45,6 @@ public class SubjectController {
         }
     }
 
-    /*@GetMapping("/api/schedule")
-    public ResponseEntity<List<Schedule>> getSchedule(){
-        List<Schedule> scheduleList = scheduleRepository.findAll();
-
-        if(scheduleList.size()==0){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.OK).body(scheduleList);
-        }
-    }*/
     @PostMapping("/api/schedule/create")
     public void addCourse(@RequestBody SubjectNoListDto dto) {
         System.out.println(dto);
@@ -74,7 +67,7 @@ public class SubjectController {
             RecommendedScheduleDto recommendedSchedule = new RecommendedScheduleDto(null,schedule.getFinishedSchedules().get(1),schedule.getFinishedSchedules().get(2));
             return ResponseEntity.status(HttpStatus.OK).body(recommendedSchedule);
         }
-        RecommendedScheduleDto recommendedSchedule = new RecommendedScheduleDto(schedule.getFinishedSchedules().get(schedule.getMaxEmptyIdx()),schedule.getFinishedSchedules().get(1),schedule.getFinishedSchedules().get(2));
+        RecommendedScheduleDto recommendedSchedule = new RecommendedScheduleDto(schedule.getFinishedSchedules().get(schedule.getMaxEmptyIdx()),schedule.getFinishedSchedules().get(1),laziestSchedule(schedule.getFinishedSchedules()));
         return ResponseEntity.status(HttpStatus.OK).body(recommendedSchedule);
     }
 }

@@ -40,16 +40,18 @@ public class MakeSchedule {
                     }
                 }
                 finishedSchedules.add(courses);
+                // manyEmpty 저장하는 코드
                 int score =0;
                 for(int i=1; i<timeSchedule.size();i++){
                     if(timeSchedule.get(i).isEmpty()){
                         score++;
                     }
                 }
-                if(score>maxEmpty){
+                if(score>maxEmpty) {
                     maxEmpty = score;
-                    maxEmptyIdx = finishedSchedules.size()-1;
+                    maxEmptyIdx = finishedSchedules.size() - 1;
                 }
+                ////////
             }
             return;
         }

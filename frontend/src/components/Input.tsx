@@ -30,7 +30,6 @@ function Input() {
   const [maxCredit, setMaxCredit] = useState<number>(0);
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
-
   const sub = useQuerySubject();
   const { mutateAsync: sendSubject } = useMutateSchedule();
   const navigate = useNavigate();
