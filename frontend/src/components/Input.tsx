@@ -11,12 +11,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
-import { useQuerySubject } from "../queries/subject";
+import { useMutateSubject, useQuerySubject } from "../queries/subject";
 import { useMutateSchedule } from "../queries/schedule";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export interface Sub {
-  subNo: string;
+  subjectNo: string;
   courseNo: string;
   subName: string;
   professor: string;
@@ -31,8 +31,12 @@ function Input() {
   const [maxCredit, setMaxCredit] = useState<number>(0);
   const [requiredSubject, setRequiredSubject] = useState<Sub[]>([]);
   const [electiveSubject, setElectiveSubject] = useState<Sub[]>([]);
+
   const sub = useQuerySubject();
+
   const { mutateAsync: sendSubject } = useMutateSchedule();
+  //const { mutateAsync: sendTest } = useMutateSubject();
+
   const navigate = useNavigate();
 
   if (sub.isPending) {
@@ -42,7 +46,6 @@ function Input() {
   }
 
   const subjectNumbers: string[] = [];
-  const subject: Sub[] = [];
 
   const alreadyCal: Set<string> = new Set();
   let creditSum = 0;
@@ -62,24 +65,17 @@ function Input() {
   }
   for (let i = 0; i < sub.data.length; i++) {
     subjectNumbers.push(sub.data[i].subjectNo);
-    const cmp: Sub = {
-      subNo: sub.data[i].subjectNo,
-      courseNo: sub.data[i].courseNo,
-      subName: sub.data[i].subjectName,
-      professor: sub.data[i].professor,
-      credit: sub.data[i].credit,
-    };
-    subject.push(cmp);
   }
+
   const onClickRequired = (subNumber: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
-    const test = subject.find((s) => s.subNo === subNumber);
+    const test = sub.data.find((s) => s.subjectNo === subNumber);
     if (test === undefined) {
       return;
     }
     if (
-      requiredSubject.some((x) => x.subNo === test.subNo) ||
-      electiveSubject.some((x) => x.subNo === test.subNo)
+      requiredSubject.some((x) => x.subjectNo === test.subjectNo) ||
+      electiveSubject.some((x) => x.subjectNo === test.subjectNo)
     ) {
       alert("이미 해당 과목을 추가하셨습니다.");
       return;
@@ -93,13 +89,13 @@ function Input() {
   };
   const onClickElective = (subNumber: string) => {
     //test안에 subject.get(subNo)를 넣어줌으로써 컴파일러가 undefined가 아니라는것을 알게 해줌.
-    const test = subject.find((s) => s.subNo === subNumber);
+    const test = sub.data.find((s) => s.subjectNo === subNumber);
     if (test === undefined) {
       return;
     }
     if (
-      requiredSubject.some((x) => x.subNo === test.subNo) ||
-      electiveSubject.some((x) => x.subNo === test.subNo)
+      requiredSubject.some((x) => x.subjectNo === test.subjectNo) ||
+      electiveSubject.some((x) => x.subjectNo === test.subjectNo)
     ) {
       alert("이미 해당 과목을 추가하셨습니다.");
       return;
@@ -113,7 +109,7 @@ function Input() {
   };
   //에러처리를 위해 임시 사용
   const isExist = (list: Sub[], subNumber: string) => {
-    const test = list.find((x: Sub) => x.subNo === subNumber);
+    const test = list.find((x: Sub) => x.subjectNo === subNumber);
     if (test === undefined) {
       return list[0];
     }
@@ -121,7 +117,7 @@ function Input() {
   };
 
   const requiredSubjectNodes = requiredSubject.map((x) => (
-    <div key={x.subNo} className={styles.entity}>
+    <div key={x.subjectNo} className={styles.entity}>
       <div className={styles.entityContents}>
         <div>과목 : {x.subName}</div>
         <div>교수 : {x.professor}</div>
@@ -130,7 +126,7 @@ function Input() {
       <UnstyledButton
         onClick={() => {
           setRequiredSubject((prev) =>
-            prev.filter((now) => x.subNo !== now.subNo)
+            prev.filter((now) => x.subjectNo !== now.subjectNo)
           );
           console.log(requiredSubject);
         }}
@@ -140,7 +136,7 @@ function Input() {
     </div>
   ));
   const electiveSubjectNodes = electiveSubject.map((x) => (
-    <div key={x.subNo} className={styles.entity}>
+    <div key={x.subjectNo} className={styles.entity}>
       <div className={styles.entityContents}>
         <div>과목 : {x.subName}</div>
         <div>교수 : {x.professor}</div>
@@ -149,7 +145,7 @@ function Input() {
       <UnstyledButton
         onClick={() => {
           setElectiveSubject((prev) =>
-            prev.filter((now) => x.subNo !== now.subNo)
+            prev.filter((now) => x.subjectNo !== now.subjectNo)
           );
         }}
       >
@@ -187,10 +183,10 @@ function Input() {
               className={styles.btn}
               onClick={() => {
                 const requiredSubjectString = requiredSubject.map(
-                  (x) => x.subNo
+                  (x) => x.subjectNo
                 );
                 const electiveSubjectString = electiveSubject.map(
-                  (x) => x.subNo
+                  (x) => x.subjectNo
                 );
                 sendSubject({
                   requiredList: requiredSubjectString,
@@ -216,9 +212,9 @@ function Input() {
         />
         <ShowSubject
           subNo={searchValue}
-          subName={isExist(subject, searchValue).subName}
-          professor={isExist(subject, searchValue).professor}
-          credit={isExist(subject, searchValue).credit}
+          subName={isExist(sub.data, searchValue).subName}
+          professor={isExist(sub.data, searchValue).professor}
+          credit={isExist(sub.data, searchValue).credit}
           onClickRequired={onClickRequired}
           onClickElective={onClickElective}
         />
