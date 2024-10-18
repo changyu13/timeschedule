@@ -22,7 +22,8 @@ export interface Sub {
   professor: string;
   credit: number;
 }
-// requiredSubject와 electiveSubject가 초기화가 안 됨. ScheduleTable을 보고 url을 다시 쳐서 들어갔을때도 다시 초기화 해주어야함. 아님 넣었던 과목들을 다시 띄워주던가. 스케줄을 보고 다시 input으로 돌아갔다가 다시 장바구니를 담았을 때
+
+export // requiredSubject와 electiveSubject가 초기화가 안 됨. ScheduleTable을 보고 url을 다시 쳐서 들어갔을때도 다시 초기화 해주어야함. 아님 넣었던 과목들을 다시 띄워주던가. 스케줄을 보고 다시 input으로 돌아갔다가 다시 장바구니를 담았을 때
 
 function Input() {
   const [opened, { open, close }] = useDisclosure(false);

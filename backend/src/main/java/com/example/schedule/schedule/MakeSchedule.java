@@ -15,6 +15,8 @@ public class MakeSchedule {
 
     private int maxEmpty = 0;
     private int maxEmptyIdx = -1;
+    private int minWait = 100;
+    private int minWaitIdx = -1;
     private int laziestScoreBest = 0;
     private int laziestScoreIdx = -1;
 
@@ -33,7 +35,7 @@ public class MakeSchedule {
     public RecommendedScheduleDto recommendSchedule() {
         return new RecommendedScheduleDto(
                 maxEmptyIdx >= 0 ? finishedSchedules.get(maxEmptyIdx) : null,
-                null,
+                finishedSchedules.get(minWaitIdx),
                 finishedSchedules.get(laziestScoreIdx));
 
     }
@@ -53,6 +55,11 @@ public class MakeSchedule {
                 if (maxEmpty < emptyScore) {
                     maxEmpty = emptyScore;
                     maxEmptyIdx = finishedSchedules.size() - 1;
+                }
+                int waitScore = ScoreCalc.littleWaitScore(timeSchedule);
+                if(waitScore < minWait){
+                    minWait = waitScore;
+                    minWaitIdx = finishedSchedules.size() - 1;
                 }
                 int laziestScore = ScoreCalc.laziestScore(courses);
                 if(laziestScoreBest < laziestScore){

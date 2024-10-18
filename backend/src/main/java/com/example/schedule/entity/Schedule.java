@@ -12,7 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class Schedule {
+public class Schedule implements Comparable<Schedule> {
     @EmbeddedId
     private ScheduleId scheduleId;
     @Column
@@ -23,5 +23,15 @@ public class Schedule {
     public boolean doesConflict(Schedule other) {
         return (other.getStartTime() <= startTime && startTime < other.getEndTime())
                 || (other.getStartTime() < endTime && endTime <= other.getEndTime());
+    }
+
+    @Override
+    public int compareTo(Schedule schedule){
+        if (schedule.startTime< startTime){
+            return 1;
+        } else if (schedule.startTime> startTime){
+          return -1;
+        }
+        return 0;
     }
 }
