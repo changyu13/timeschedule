@@ -26,12 +26,7 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     @Override
-    public int compareTo(Schedule schedule){
-        if (schedule.startTime< startTime){
-            return 1;
-        } else if (schedule.startTime> startTime){
-          return -1;
-        }
-        return 0;
+    public int compareTo(Schedule other){
+        return Integer.compare(startTime, other.startTime);
     }
 }

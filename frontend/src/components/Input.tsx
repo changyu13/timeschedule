@@ -11,19 +11,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
-import { useMutateSubject, useQuerySubject } from "../queries/subject";
+import { useMutateSubject, useQuerySubject } from "../queries/subject"; //응 니이름 임찬규
 import { useMutateSchedule } from "../queries/schedule";
 import { useNavigate } from "react-router-dom";
+import { Sub } from "../api/subject";
 
-export interface Sub {
-  subjectNo: string;
-  courseNo: string;
-  subName: string;
-  professor: string;
-  credit: number;
-}
-
-export // requiredSubject와 electiveSubject가 초기화가 안 됨. ScheduleTable을 보고 url을 다시 쳐서 들어갔을때도 다시 초기화 해주어야함. 아님 넣었던 과목들을 다시 띄워주던가. 스케줄을 보고 다시 input으로 돌아갔다가 다시 장바구니를 담았을 때
+// requiredSubject와 electiveSubject가 초기화가 안 됨. ScheduleTable을 보고 url을 다시 쳐서 들어갔을때도 다시 초기화 해주어야함. 아님 넣었던 과목들을 다시 띄워주던가. 스케줄을 보고 다시 input으로 돌아갔다가 다시 장바구니를 담았을 때
 
 function Input() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -35,7 +28,7 @@ function Input() {
   const sub = useQuerySubject();
 
   const { mutateAsync: sendSubject } = useMutateSchedule();
-  //const { mutateAsync: sendTest } = useMutateSubject();
+  const { mutateAsync: sendTest } = useMutateSubject();
 
   const navigate = useNavigate();
 

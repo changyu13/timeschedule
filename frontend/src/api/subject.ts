@@ -1,5 +1,12 @@
 import axios from "axios";
-import { Sub } from "../components/Input";
+
+export interface Sub {
+  subjectNo: string;
+  courseNo: string;
+  subName: string;
+  professor: string;
+  credit: number;
+}
 
 export const fetchSubject = async () => {
   const res = await axios.get<Sub[]>("/api/subject");

@@ -6,22 +6,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class ScoreCalc {
-    public static int emptyScore(ArrayList<ArrayList<Schedule>> timeSchedule){
-        int score =0;
-        for(int i=1; i<timeSchedule.size();i++){
-            if(timeSchedule.get(i).isEmpty()){
+    public static int emptyScore(ArrayList<ArrayList<Schedule>> timeSchedule) {
+        int score = 0;
+        for (int i = 1; i < timeSchedule.size(); i++) {
+            if (timeSchedule.get(i).isEmpty()) {
                 score++;
             }
         }
         return score;
     }
 
-    public static int littleWaitScore(ArrayList<ArrayList<Schedule>> timeSchedule){
+    public static int littleWaitScore(ArrayList<ArrayList<Schedule>> timeSchedule) {
         int waitScore = 0;
-        for (int i=1; i<timeSchedule.size();i++){
-            Collections.sort(timeSchedule.get(i));
-            for(int j=1; j<timeSchedule.get(i).size(); j++){
-                waitScore += timeSchedule.get(i).get(j).getStartTime()-timeSchedule.get(i).get(j-1).getEndTime();
+        for (int i = 1; i < timeSchedule.size(); i++) {
+            ArrayList<Schedule> dowTimeSchedule = new ArrayList<>(timeSchedule.get(i));
+            Collections.sort(dowTimeSchedule);
+            for (int j = 1; j < dowTimeSchedule.size(); j++) {
+                waitScore += dowTimeSchedule.get(j).getStartTime() - dowTimeSchedule.get(j - 1).getEndTime();
             }
         }
         return waitScore;
@@ -30,7 +31,7 @@ public class ScoreCalc {
     // 1.두번째 점수계산 테마 설정
     // 2. requiredList와 electiveList 하나로 합치기 boolean required 변수 추가
     // 3. 장바구니에 담고 지울 때 mutate로 추가 & 삭제 요청 api
-    
+
 
     public static int laziestScore(ArrayList<Schedule> schedule) {
         int lazyScore = 30;
