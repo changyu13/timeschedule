@@ -23,14 +23,17 @@ public class ScoreCalc {
             Collections.sort(dowTimeSchedule);
             for (int j = 1; j < dowTimeSchedule.size(); j++) {
                 waitScore += dowTimeSchedule.get(j).getStartTime() - dowTimeSchedule.get(j - 1).getEndTime();
+                //저녁 시간& 점심시간이 껴 있을 시 더 낮은 점수 부여. 이게 옳은 것인가? 그럼 아침 시간도 배정해줘야하는가?
+                if((dowTimeSchedule.get(j).getStartTime()>=9 && dowTimeSchedule.get(j-1).getEndTime() <= 6)||
+                        (dowTimeSchedule.get(j).getStartTime()>=19 && dowTimeSchedule.get(j-1).getEndTime() <= 17)){
+                    waitScore -= 2;
+                }
             }
         }
         return waitScore;
     }
     // 할일 리스트
     // 1.두번째 점수계산 테마 설정
-    // 2. requiredList와 electiveList 하나로 합치기 boolean required 변수 추가
-    // 3. 장바구니에 담고 지울 때 mutate로 추가 & 삭제 요청 api
 
 
     public static int laziestScore(ArrayList<Schedule> schedule) {

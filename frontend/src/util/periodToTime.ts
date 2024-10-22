@@ -1,3 +1,4 @@
+//수정 필요!
 export function periodToTime(period: number) {
   let m = 0;
 

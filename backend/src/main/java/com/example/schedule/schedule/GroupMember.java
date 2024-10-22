@@ -14,4 +14,5 @@ import java.util.List;
 public class GroupMember {
     private int credit;
     private List<Schedule> schedules;
+    private boolean required;
 }

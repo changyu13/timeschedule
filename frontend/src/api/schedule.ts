@@ -17,14 +17,8 @@ interface RecommendedSchdule {
 }
 
 //visual studio에서 requiredList, electiveList dto 보내기
-export const postSchedule = async (
-  requiredList: string[],
-  electiveList: string[],
-  userCredit: number
-) => {
+export const postSchedule = async (userCredit: number) => {
   const data = {
-    requiredSubjects: requiredList,
-    electiveSubjects: electiveList,
     userCredit: userCredit,
   };
   await axios.post("/api/schedule/create", data);

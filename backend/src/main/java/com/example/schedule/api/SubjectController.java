@@ -1,7 +1,8 @@
 package com.example.schedule.api;
 
 import com.example.schedule.dto.RecommendedScheduleDto;
-import com.example.schedule.dto.SubjectNoListDto;
+import com.example.schedule.dto.SubToAddDto;
+import com.example.schedule.dto.UserCreditDto;
 import com.example.schedule.entity.Subject;
 import com.example.schedule.repository.ScheduleRepository;
 import com.example.schedule.repository.SubjectRepository;
@@ -11,15 +12,11 @@ import com.example.schedule.service.ScheduleMakeService;
 import com.example.schedule.service.SessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class SubjectController {
@@ -42,14 +39,26 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.OK).body(subjectList);
         }
     }
+    @PostMapping("/api/subject")
+    public void addSubject(@RequestBody SubToAddDto dto){
+        System.out.println("dto:"+dto);
+        sessionService.getSubjectList().add(dto);
+    }
+    @DeleteMapping("/api/subject")
+    public void deleteSubject(@RequestBody SubToAddDto dto){
+        sessionService.getSubjectList().remove(dto);
+    }
+    @GetMapping("/api/subjectToAdd")
+    public ResponseEntity<HashSet<SubToAddDto>> getSubjectToAddList(){
+        return ResponseEntity.status(HttpStatus.OK).body(sessionService.getSubjectList());
+    }
 
     @PostMapping("/api/schedule/create")
-    public void addCourse(@RequestBody SubjectNoListDto dto) {
-        System.out.println(dto);
-
-        List<Group> groups = scheduleMakeService.f(dto.getRequiredSubjects(), dto.getElectiveSubjects());
-
-        MakeSchedule mySchdule = new MakeSchedule(groups,dto.getUserCredit());
+    public void makeMySchedule(@RequestBody UserCreditDto credit) {
+        List<Group> groups = scheduleMakeService.makeGroup(sessionService.getSubjectList());
+        System.out.println("groups:"+groups);
+        //UserCreditDto 완성, 프론트엔드에서는 학점만 넣어서 api 호출
+        MakeSchedule mySchdule = new MakeSchedule(groups,credit.getUserCredit());
         sessionService.setMakeSchedule(mySchdule);
         System.out.println(mySchdule);
     }

@@ -33,6 +33,7 @@ public class MakeSchedule {
     }
 
     public RecommendedScheduleDto recommendSchedule() {
+        System.out.println("userCredit:"+userCredit);
         return new RecommendedScheduleDto(
                 maxEmptyIdx >= 0 ? finishedSchedules.get(maxEmptyIdx) : null,
                 finishedSchedules.get(minWaitIdx),
@@ -49,6 +50,7 @@ public class MakeSchedule {
                 for (List<Schedule> schedules : timeSchedule) {
                     courses.addAll(schedules);
                 }
+                System.out.println("추가");
                 finishedSchedules.add(courses);
                 // manyEmpty 저장하는 코드
                 int emptyScore = ScoreCalc.emptyScore(timeSchedule);

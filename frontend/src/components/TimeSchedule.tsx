@@ -26,6 +26,7 @@ function TimeSchedule() {
     <div className={styles.container}>
       <div className={styles.btnContainer}>
         <button
+          className={styles.btn}
           onClick={() => {
             setScheduleIdx(0);
           }}
@@ -33,6 +34,7 @@ function TimeSchedule() {
           최대 공강
         </button>
         <button
+          className={styles.btn}
           onClick={() => {
             setScheduleIdx(1);
           }}
@@ -40,6 +42,7 @@ function TimeSchedule() {
           짧은 수업 텀
         </button>
         <button
+          className={styles.btn}
           onClick={() => {
             setScheduleIdx(2);
           }}
