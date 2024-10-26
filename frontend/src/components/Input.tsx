@@ -76,8 +76,6 @@ const Input = () => {
         creditSum += target.credit;
       }
     }
-  }
-  for (const x of subjectToAddList.data) {
     const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
     console.log(target);
     if (target !== undefined) {
@@ -137,8 +135,21 @@ const Input = () => {
       alert("이미 해당 과목을 추가하셨습니다.");
       return;
     }
-    //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
+    if (
+      subjectToAddList.data.some((x) => {
+        const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
+        if (target !== undefined) {
+          if (alreadyCal.has(target.courseNo)) {
+            return true;
+          }
+        }
+      })
+    ) {
+      alert("이미 같은 교과번호의 과목이 추가 됨");
+      return;
+    }
     if (creditSum + test.credit > maxCredit) {
+      //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법
       alert("최대학점을 초과했습니다.");
       return;
     }
@@ -157,6 +168,21 @@ const Input = () => {
     }
     if (subjectToAddList.data.some((x) => x.subjectNo === test.subjectNo)) {
       alert("이미 해당 과목을 추가하셨습니다.");
+      return;
+    }
+    if (
+      subjectToAddList.data.some((x) => {
+        if (x.required == true) {
+          const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
+          if (target !== undefined) {
+            if (alreadyCal.has(target.courseNo)) {
+              return true;
+            }
+          }
+        }
+      })
+    ) {
+      alert("이미 필수 과목에 같은 교과번호의 과목이 추가 됨");
       return;
     }
     //...은 뒤에오는 배열 or 딕셔너리의 원소를 풀어 헤치는 문법

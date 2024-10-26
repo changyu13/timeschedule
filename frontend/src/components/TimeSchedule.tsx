@@ -1,11 +1,7 @@
 import styles from "./TimeSchedule.module.css";
 import { useQuerySchedule } from "../queries/schedule";
-import { Schedule } from "../api/schedule";
-import { periodToTime } from "../util/periodToTime";
 import { useState } from "react";
 import ScheduleTable from "./ScheduleTable";
-import { useQuerySubject } from "../queries/subject";
-
 function TimeSchedule() {
   const timeData = useQuerySchedule();
   const [scheduleIdx, setScheduleIdx] = useState(0);

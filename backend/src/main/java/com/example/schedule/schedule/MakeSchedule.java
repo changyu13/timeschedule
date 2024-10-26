@@ -17,7 +17,7 @@ public class MakeSchedule {
     private int maxEmptyIdx = -1;
     private int minWait = 100;
     private int minWaitIdx = -1;
-    private int laziestScoreBest = 0;
+    private int laziestScoreBest = -1;
     private int laziestScoreIdx = -1;
 
     public MakeSchedule(List<Group> groups, int userCredit) {
@@ -36,8 +36,8 @@ public class MakeSchedule {
         System.out.println("userCredit:"+userCredit);
         return new RecommendedScheduleDto(
                 maxEmptyIdx >= 0 ? finishedSchedules.get(maxEmptyIdx) : null,
-                finishedSchedules.get(minWaitIdx),
-                finishedSchedules.get(laziestScoreIdx));
+                minWaitIdx >= 0 ? finishedSchedules.get(minWaitIdx) : null,
+                laziestScoreIdx >= 0 ? finishedSchedules.get(laziestScoreIdx):null);
 
     }
 

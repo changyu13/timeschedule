@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @ConditionalOnNotWebApplication
@@ -25,6 +27,9 @@ public class Update implements CommandLineRunner {
     SubjectRepository subjectRepository;
     @Autowired
     ScheduleRepository scheduleRepository;
+
+    //파싱해서 사용하자.
+    private static final Pattern REGEX_TIME = Pattern.compile("([월화수목금토일])(\\d{2})(?:-(\\d{2}))?(?:\\(([^,\\n]*)\\))?");
 
     public int dayOfWeek(char d) {
         switch (d) {
@@ -62,20 +67,45 @@ public class Update implements CommandLineRunner {
         csvReader.readNext();
         while ((line = csvReader.readNext()) != null) {
             //과목 넣기
-            if (line[timeIdx].trim().isEmpty() || line[timeIdx].contains("e") || line[professorIdx].trim().isEmpty()) {
-                System.out.println(noIdx + " : 필드값이 없습니다.");
+            if (line[timeIdx].trim().isEmpty() || line[professorIdx].trim().isEmpty()) {
+                System.out.println(line[noIdx] + " : 필드값이 없습니다.");
+                continue;
+            }
+            //e러닝 yee~
+            else if(line[timeIdx].trim().equals("(e-러닝)")){
+                ScheduleId id = new ScheduleId(line[noIdx], dayOfWeek('월'));
+                ScheduleDto scheduleDto = new ScheduleDto(id, 30,30);
+                Schedule schedule = scheduleDto.toEntity();
+                scheduleRepository.save(schedule);
+
+                SubjectDto subjectDto = new SubjectDto(line[noIdx],line[courseIdx], line[nameIdx].trim(), line[professorIdx].trim(),(int)Double.parseDouble(line[creditIdx]));
+                Subject subject = subjectDto.toEntity();
+                System.out.println(subject.getSubjectNo() + "/" + subject.getSubjectName() + "/" + subject.getProfessor());
+                subjectRepository.save(subject);
+                System.out.println(line[noIdx] + " : e러닝");
                 continue;
             }
             scheduleList = line[timeIdx].split(",");
             for (int i = 0; i < scheduleList.length; i++) {
                 String s = scheduleList[i].trim();
+                Matcher matcher = REGEX_TIME.matcher(s);
+                String day="";
+                String startTime="";
+                String endTime="";
+                String room="";
+                if(matcher.find()){
+                    day = matcher.group(1);
+                    startTime = matcher.group(2);
+                    endTime= matcher.group(3);
+                    room = matcher.group(4);
+                }else{
+                    System.out.println("요주의 인물 : "+ s);
+                }
                 //가독성이 떨어지니 요일을 받고 숫자를 반환하는 함수 생성
                 ScheduleId id = new ScheduleId(line[noIdx], dayOfWeek(s.charAt(0)));
-                if (s.charAt(3) != '-') {
-                    continue;
-                }
-                ScheduleDto schedulteDto = new ScheduleDto(id, Integer.parseInt(s.substring(1, 3)), Integer.parseInt(s.substring(4, 6)));
-                Schedule schedule = schedulteDto.toEntity();
+                ScheduleDto scheduleDto = (endTime == null)? new ScheduleDto(id, Integer.parseInt(startTime), Integer.parseInt(startTime))
+                        : new ScheduleDto(id, Integer.parseInt(startTime), Integer.parseInt(endTime));
+                Schedule schedule = scheduleDto.toEntity();
                 scheduleRepository.save(schedule);
             }
             SubjectDto subjectDto = new SubjectDto(line[noIdx],line[courseIdx], line[nameIdx].trim(), line[professorIdx].trim(),(int)Double.parseDouble(line[creditIdx]));

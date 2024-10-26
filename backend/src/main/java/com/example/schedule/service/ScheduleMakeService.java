@@ -38,6 +38,7 @@ public class ScheduleMakeService {
             Schedule schedule = new Schedule(scheduleId, null, null);
             List<Schedule> scheduleList = scheduleRepository.findAll(Example.of(schedule));
             if (scheduleList.isEmpty()) {
+                System.out.println("sheduleId : "+ scheduleId);
                 throw new RuntimeException("해당 schedule을 찾을 수 없음");
             }
 

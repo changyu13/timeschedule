@@ -35,14 +35,21 @@ const ScheduleTable: React.FC<Props> = ({ courseList }) => {
   }
   const courseListNodes: JSX.Element[] = [];
   const colorMap = new Map<string, string>();
-
+  const eLearning = new Set<Schedule>();
+  const eLearningNodes: JSX.Element[] = [];
   let colorIdx = 0;
   for (let period = 0; period <= 23; period++) {
     const dowList = [];
     for (let j = 1; j <= 6; j++) {
       let hasCourse = false;
       for (const x of courseList) {
-        if (
+        if (x.startTime === 30 && x.endTime === 30) {
+          eLearning.add(x);
+          if (!colorMap.has(x.scheduleId.subjectNo)) {
+            colorMap.set(x.scheduleId.subjectNo, COLORS[colorIdx]);
+            colorIdx++;
+          }
+        } else if (
           x.scheduleId.dow === j &&
           x.startTime <= period &&
           period < x.endTime
@@ -102,21 +109,43 @@ const ScheduleTable: React.FC<Props> = ({ courseList }) => {
       </tr>
     );
   }
+  for (const x of eLearning) {
+    const currentSubject = sub.data.find(
+      (now) => now.subjectNo === x.scheduleId.subjectNo
+    );
+    if (currentSubject === undefined) {
+      return <div>에러</div>;
+    }
+    eLearningNodes.push(
+      <div
+        key={currentSubject.subjectNo}
+        className={styles.eLearning}
+        style={{
+          backgroundColor: colorMap.get(currentSubject.subjectNo),
+        }}
+      >
+        {currentSubject.subjectName}
+      </div>
+    );
+  }
   return (
-    <table className={styles.board}>
-      <thead>
-        <tr>
-          <td></td>
-          <td>월</td>
-          <td>화</td>
-          <td>수</td>
-          <td>목</td>
-          <td>금</td>
-          <td>토</td>
-        </tr>
-      </thead>
-      <tbody>{courseListNodes}</tbody>
-    </table>
+    <div className={styles.back}>
+      <table className={styles.board}>
+        <thead>
+          <tr>
+            <td></td>
+            <td>월</td>
+            <td>화</td>
+            <td>수</td>
+            <td>목</td>
+            <td>금</td>
+            <td>토</td>
+          </tr>
+        </thead>
+        <tbody>{courseListNodes}</tbody>
+      </table>
+      {eLearningNodes}
+    </div>
   );
 };
 

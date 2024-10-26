@@ -1,11 +1,21 @@
+.back {
+}
 .board {
   width: 100%;
   height: 70dvh;
-  padding: 2rem;
+  padding-top: 2rem;
+  padding-right: 2rem;
+  padding-left: 2rem;
   table-layout: fixed;
 }
 
 .board td {
   border: 1px solid black;
   text-align: center;
+}
+
+.eLearning {
+  text-align: center;
+  margin-right: 2rem;
+  margin-left: 2rem;
 }
