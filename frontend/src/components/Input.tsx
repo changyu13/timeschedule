@@ -138,10 +138,11 @@ const Input = () => {
     if (
       subjectToAddList.data.some((x) => {
         const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
-        if (target !== undefined) {
-          if (alreadyCal.has(target.courseNo)) {
-            return true;
-          }
+        const subjectToAdd = sub.data.find(
+          (now) => now.subjectNo === subjectNo
+        );
+        if (subjectToAdd?.courseNo == target?.courseNo) {
+          return true;
         }
       })
     ) {
@@ -174,10 +175,11 @@ const Input = () => {
       subjectToAddList.data.some((x) => {
         if (x.required == true) {
           const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
-          if (target !== undefined) {
-            if (alreadyCal.has(target.courseNo)) {
-              return true;
-            }
+          const subjectToAdd = sub.data.find(
+            (now) => now.subjectNo === subjectNo
+          );
+          if (subjectToAdd?.courseNo == target?.courseNo) {
+            return true;
           }
         }
       })
