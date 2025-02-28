@@ -66,9 +66,6 @@ const ScheduleTable: React.FC<Props> = ({ courseList }) => {
             return <div>에러</div>;
           }
           if (x.endTime - x.startTime >= 2) {
-            if (x.scheduleId.subjectNo == "0059") {
-              console.log("colorMap:" + colorMap.get(x.scheduleId.subjectNo));
-            }
             if (x.startTime === period) {
               dowList.push(
                 <td

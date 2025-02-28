@@ -46,7 +46,7 @@ export const useMutateAddSubject = () => {
     },
   });
 };
-export const useMutateDelteSubject = () => {
+export const useMutateDeleteSubject = () => {
   return useMutation({
     mutationFn: (params: Params) => deleteSubject(params.subject),
     onMutate: async (params: Params) => {

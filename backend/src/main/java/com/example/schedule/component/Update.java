@@ -52,7 +52,7 @@ public class Update implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws CsvValidationException, IOException {
-        CSVReader csvReader = new CSVReader(new FileReader("D:\\study\\timeschedule\\backend\\schedule.csv"));
+        CSVReader csvReader = new CSVReader(new FileReader("schedule.csv"));
         String[] line;
         String[] time;
         int courseIdx = 4;
@@ -71,7 +71,6 @@ public class Update implements CommandLineRunner {
                 System.out.println(line[noIdx] + " : 필드값이 없습니다.");
                 continue;
             }
-            //e러닝 yee~
             else if(line[timeIdx].trim().equals("(e-러닝)")){
                 ScheduleId id = new ScheduleId(line[noIdx], dayOfWeek('월'));
                 ScheduleDto scheduleDto = new ScheduleDto(id, 30,30);

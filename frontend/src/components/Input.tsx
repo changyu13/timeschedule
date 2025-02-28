@@ -13,7 +13,7 @@ import ShowSubject from "./ShowSubject";
 import { FaWindowClose } from "react-icons/fa";
 import {
   useMutateAddSubject,
-  useMutateDelteSubject,
+  useMutateDeleteSubject,
   useQuerySubject,
   useQuerySubjectToAdd,
 } from "../queries/subject";
@@ -41,7 +41,7 @@ const Input = () => {
 
   const { mutateAsync: sendSchedule } = useMutateSchedule();
   const { mutateAsync: sendSubject } = useMutateAddSubject();
-  const { mutateAsync: deleteSubject } = useMutateDelteSubject();
+  const { mutateAsync: deleteSubject } = useMutateDeleteSubject();
 
   const navigate = useNavigate();
 
@@ -61,67 +61,65 @@ const Input = () => {
   const alreadyCal: Set<string> = new Set();
   let creditSum = 0;
 
+  // 과목 고르는 SELECT 메뉴에 들어갈 subjectNo
   for (let i = 0; i < sub.data.length; i++) {
     subjectNumbers.push(sub.data[i].subjectNo);
   }
 
   for (const x of subjectToAddList.data) {
+    const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
+    console.log(target);
+    if (target === undefined) {
+      continue;
+    }
     if (x.required == true) {
-      const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
-      if (target === undefined) {
-        continue;
-      }
       if (!alreadyCal.has(target.courseNo)) {
         alreadyCal.add(target.courseNo);
         creditSum += target.credit;
       }
     }
-    const target = sub.data.find((now) => now.subjectNo === x.subjectNo);
-    console.log(target);
-    if (target !== undefined) {
-      if (x.required === true) {
-        requiredSubjectNodes.push(
-          <div key={x.subjectNo} className={styles.entity}>
-            <div className={styles.entityContents}>
-              <div>과목 : {target.subjectName}</div>
-              <div>교수 : {target.professor}</div>
-              <div>학점 : {target.credit}</div>
-            </div>
-            <UnstyledButton
-              onClick={() => {
-                const subToDelete: SubToAdd = {
-                  subjectNo: target.subjectNo,
-                  required: true,
-                };
-                deleteSubject({ subject: subToDelete });
-              }}
-            >
-              <FaWindowClose />
-            </UnstyledButton>
+    if (x.required === true) {
+      requiredSubjectNodes.push(
+        <div key={x.subjectNo} className={styles.entity}>
+          <div className={styles.entityContents}>
+            <div>과목 : {target.subjectName}</div>
+            <div>교수 : {target.professor}</div>
+            <div>학점 : {target.credit}</div>
           </div>
-        );
-      } else {
-        electiveSubjectNodes.push(
-          <div key={x.subjectNo} className={styles.entity}>
-            <div className={styles.entityContents}>
-              <div>과목 : {target.subjectName}</div>
-              <div>교수 : {target.professor}</div>
-              <div>학점 : {target.credit}</div>
-            </div>
-            <UnstyledButton
-              onClick={() => {
-                const subToDelete: SubToAdd = {
-                  subjectNo: target.subjectNo,
-                  required: false,
-                };
-                deleteSubject({ subject: subToDelete });
-              }}
-            >
-              <FaWindowClose />
-            </UnstyledButton>
+          <UnstyledButton
+            onClick={() => {
+              const subToDelete: SubToAdd = {
+                subjectNo: target.subjectNo,
+                required: true,
+              };
+              deleteSubject({ subject: subToDelete });
+            }}
+          >
+            <FaWindowClose />
+          </UnstyledButton>
+        </div>
+      );
+    } else {
+      electiveSubjectNodes.push(
+        <div key={x.subjectNo} className={styles.entity}>
+          <div className={styles.entityContents}>
+            <div>과목 : {target.subjectName}</div>
+            <div>교수 : {target.professor}</div>
+            <div>학점 : {target.credit}</div>
           </div>
-        );
-      }
+          <UnstyledButton
+            onClick={() => {
+              const subToDelete: SubToAdd = {
+                subjectNo: target.subjectNo,
+                required: false,
+              };
+              deleteSubject({ subject: subToDelete });
+            }}
+          >
+            <FaWindowClose />
+          </UnstyledButton>
+        </div>
+      );
     }
   }
 
@@ -198,14 +196,17 @@ const Input = () => {
     };
     sendSubject({ subject: subToAdd });
   };
-  //에러처리를 위해 임시 사용
-  const isExist = (list: Sub[], subNumber: string) => {
+  //에러처리를 위해 임시 사용(변경할 것)
+  /*const isExist = (list: Sub[], subNumber: string) => {
     const test = list.find((x: Sub) => x.subjectNo === subNumber);
     if (test === undefined) {
       return list[0];
     }
     return test;
-  };
+  };*/
+  const selectedSubject = sub.data.find(
+    (x: Sub) => x.subjectNo === searchValue
+  );
 
   //subjectToAddList에서 required boolean type을 이용한 분류를 어디서 시작할지 정해야 함.
   return (
@@ -257,14 +258,18 @@ const Input = () => {
           searchValue={searchValue}
           onSearchChange={setSearchValue}
         />
-        <ShowSubject
-          subNo={searchValue}
-          subName={isExist(sub.data, searchValue).subjectName}
-          professor={isExist(sub.data, searchValue).professor}
-          credit={isExist(sub.data, searchValue).credit}
-          onClickRequired={onClickRequired}
-          onClickElective={onClickElective}
-        />
+        {selectedSubject !== undefined ? (
+          <ShowSubject
+            subNo={searchValue}
+            subName={selectedSubject.subjectName}
+            professor={selectedSubject.professor}
+            credit={selectedSubject.credit}
+            onClickRequired={onClickRequired}
+            onClickElective={onClickElective}
+          />
+        ) : (
+          <div>추가할 과목을 선택해주세요!</div>
+        )}
       </Modal>
     </div>
   );

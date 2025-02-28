@@ -1,7 +1,6 @@
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import styles from "./App.module.css";
-import Home from "./components/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Input from "./components/Input";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -15,8 +14,7 @@ function App() {
         <MantineProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />}></Route>
-              <Route path="/input" element={<Input />}></Route>
+              <Route path="/" element={<Input />}></Route>
               <Route path="/schedule" element={<TimeSchedule />}></Route>
             </Routes>
           </BrowserRouter>
